@@ -1,48 +1,22 @@
-FROM balenalib/raspberrypi5-debian:latest
+# Dockerfile för Ignition 8.3.1 på Raspberry Pi 5 (headless)
+FROM balenalib/raspberrypi5-64-debian:bullseye
 
-# Install dependencies
-RUN install_packages \
-    openjdk-17-jre-headless \
-    unzip \
-    ca-certificates
+# Installera OpenJDK 11
+RUN apt-get update && apt-get install -y openjdk-11-jre-headless
 
-# Create ignition user with fixed UID/GID for volume compatibility
-RUN addgroup --system --gid 1000 ignition && \
-    adduser --system --uid 1000 --gid 1000 ignition
-
-# Copy the Ignition zip file (added by .resinciorc)
-# The file will be available at build time via .resinciorc configuration
-COPY Ignition-linux-aarch-64-8.3.2-rc2.zip /tmp/ignition.zip
-
-# Extract and install Ignition
-RUN unzip /tmp/ignition.zip -d /opt/ && \
-    rm /tmp/ignition.zip && \
-    mv /opt/ignition-8.3.2 /opt/ignition
-
-# Create data and logs directories (for volume mounts)
-RUN mkdir -p /opt/ignition/data /opt/ignition/logs
-
-# Set proper permissions
-RUN chown -R ignition:ignition /opt/ignition
-
-# Create a wrapper script to ensure proper startup
-RUN echo '#!/bin/bash\n\
-# Wait for any initialization\n\
-sleep 2\n\
-# Start Ignition\n\
-cd /opt/ignition\n\
-exec ./ignition.sh\n\
-' > /usr/local/bin/start-ignition.sh && \
-    chmod +x /usr/local/bin/start-ignition.sh && \
-    chown ignition:ignition /usr/local/bin/start-ignition.sh
-
-# Switch to ignition user
-USER ignition
+# Skapa arbetskatalog
 WORKDIR /opt/ignition
 
-# Expose ports
-EXPOSE 8088 8043 8044 8000
+# Kopiera Ignition-filerna från den extraherade zip-mappen
+COPY Ignition-linux-aarch-64-8.1.50/ /opt/ignition/
+RUN chmod +x /opt/ignition/ignition.sh
 
-# Start Ignition using wrapper script
-CMD ["/usr/local/bin/start-ignition.sh"]
+# Sätt JVM heap-max till 2 GB
+RUN sed -i 's/wrapper.java.maxmemory=.*/wrapper.java.maxmemory=2048/' /opt/ignition/data/ignition.conf
 
+# Kopiera startup-script (som sätter CPU governor + swap)
+COPY startup.sh /opt/ignition/startup.sh
+RUN chmod +x /opt/ignition/startup.sh
+
+# Starta Ignition headless i foreground via startup.sh
+CMD ["/opt/ignition/startup.sh"]
