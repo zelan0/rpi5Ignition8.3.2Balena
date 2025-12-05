@@ -1,0 +1,43 @@
+# Git repository (not needed for Docker build)
+.git
+.gitignore
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Backup and temporary files
+*.bak
+*.backup
+*.old
+*.zip
+*.tar.gz
+*.tgz
+tmp/
+temp/
+
+# Documentation and non-essential files
+README.md
+*.md
+*.txt
+!startup.sh
+
+# Docker files (not needed in build context)
+.dockerignore
+Dockerfile.old.zip
+docker-compose.yml.zip
+.resinciorc.old.zip
+tok.zip
+
+# Keep these - they are needed for COPY commands:
+# Ignition-linux-aarch-64-8.1.50/
+# modules/
+# startup.sh
+# docker-compose.yml
+# Dockerfile
