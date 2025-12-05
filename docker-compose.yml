@@ -22,10 +22,3 @@ services:
       - ignition-modules:/opt/ignition/user-lib/modules
     command: [ "/opt/ignition/startup.sh" ]
 
-  seed-modules:
-    image: alpine
-    restart: "no"
-    command: sh -c "mkdir -p /modules && cp /seed/*.modl /modules/ || true"
-    volumes:
-      - ignition-modules:/modules
-      - ./modules:/seed

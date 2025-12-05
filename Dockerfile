@@ -10,6 +10,9 @@ WORKDIR /opt/ignition
 
 # Kopiera Ignition-filerna från den extraherade zip-mappen
 COPY Ignition-linux-aarch-64-8.1.50/ /opt/ignition/
+
+# Kopiera modules (MQTT Engine) direkt in i imagen
+COPY modules/*.modl /opt/ignition/user-lib/modules/
 RUN chmod +x /opt/ignition/ignition.sh
 
 # Sätt JVM heap-max till 2 GB
