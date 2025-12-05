@@ -1,9 +1,12 @@
 # Dockerfile för Ignition 8.3.1 på Raspberry Pi 5 (headless)
-# FROM balenalib/raspberrypi5-64-debian:bullseye
-FROM balenalib/raspberry-pi5-debian:bullseye
+# Using Docker Official Image for ARM64 (recommended by Balena since balenalib is deprecated)
+FROM arm64v8/debian:bullseye
 
-# Installera OpenJDK 11
-RUN apt-get update && apt-get install -y openjdk-11-jre-headless
+# Installera OpenJDK 11 och systempaket
+RUN apt-get update && apt-get install -y \
+    openjdk-11-jre-headless \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
 # Skapa arbetskatalog
 WORKDIR /opt/ignition
