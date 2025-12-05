@@ -6,13 +6,19 @@ if [ -w /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor ]; then
 fi
 
 # Skapa och aktivera swap (2 GB) om det inte redan finns
-SWAPFILE="/mnt/data/swapfile"
+# Använder ignition-data volymen som är monterad på /opt/ignition/data
+SWAPFILE="/opt/ignition/data/swapfile"
 if [ ! -f "$SWAPFILE" ]; then
-  fallocate -l 2G "$SWAPFILE" || dd if=/dev/zero of="$SWAPFILE" bs=1M count=2048
-  chmod 600 "$SWAPFILE"
-  mkswap "$SWAPFILE"
+  echo "Creating swap file..."
+  fallocate -l 2G "$SWAPFILE" 2>/dev/null || dd if=/dev/zero of="$SWAPFILE" bs=1M count=2048 2>/dev/null || {
+    echo "Warning: Could not create swap file (may not be needed)"
+  }
+  if [ -f "$SWAPFILE" ]; then
+    chmod 600 "$SWAPFILE"
+    mkswap "$SWAPFILE"
+    swapon "$SWAPFILE" || echo "Warning: Could not activate swap"
+  fi
 fi
-swapon "$SWAPFILE"
 
 # Starta Ignition i förgrund
 exec /opt/ignition/ignition.sh console

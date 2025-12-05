@@ -6,6 +6,8 @@ FROM arm64v8/debian:bullseye
 RUN apt-get update && apt-get install -y \
     openjdk-11-jre-headless \
     ca-certificates \
+    procps \
+    util-linux \
     && rm -rf /var/lib/apt/lists/*
 
 # Skapa arbetskatalog
