@@ -39,3 +39,5 @@ temp/
 # UNDANTAG - måste komma EFTER alla ignoreringsregler
 Ignition-linux-aarch-64-8.1.50/
 Ignition-linux-aarch-64-8.1.50/**/*
+modules/
+modules/**/*

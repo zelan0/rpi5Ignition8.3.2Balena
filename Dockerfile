@@ -1,5 +1,6 @@
 # Dockerfile för Ignition 8.3.1 på Raspberry Pi 5 (headless)
-FROM balenalib/raspberrypi5-64-debian:bullseye
+# FROM balenalib/raspberrypi5-64-debian:bullseye
+FROM balenalib/raspberry-pi5-debian:bullseye
 
 # Installera OpenJDK 11
 RUN apt-get update && apt-get install -y openjdk-11-jre-headless
